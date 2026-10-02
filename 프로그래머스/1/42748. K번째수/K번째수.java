@@ -1,21 +1,16 @@
 import java.util.*;
-
 class Solution {
     public int[] solution(int[] array, int[][] commands) {
-        int n = commands.length; // 3
-        int[] result = new int[n];
-        int x = 0;
+        int[] answer = new int[commands.length];
+        int i = 0;
         
-        for(int[] command : commands){
-            int i = command[0];
-            int j = command[1];
-            int k = command[2];
-            
-            int[] tempArray = Arrays.copyOfRange(array, i-1, j);
-            Arrays.sort(tempArray);
-            result[x++] = tempArray[k-1];
+        for(int[] c : commands){
+            int[] temp = Arrays.copyOfRange(array, c[0]-1, c[1]);
+            Arrays.sort(temp);
+            answer[i] = temp[c[2]-1];
+            i++;
         }
         
-        return result;
+        return answer;
     }
 }
