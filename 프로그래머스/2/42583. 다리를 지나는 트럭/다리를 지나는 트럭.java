@@ -1,41 +1,35 @@
-// [시간복잡도] N <= 10000 -> O(N)
-// [자료구조] 최단 시간
-// [풀이] 큐 -> while 뭐가 빌때? 다리 건너는 트럭이 빌때 끝 -> 어떤 값? 인덱스 or 값 or 남은 거리 -> 
+// [시간복잡도] 트럭 N ≤ 1만, 다리 길이 L ≤ 1만 → 맨 앞 트럭만 보면 되게 만들자. 트럭마다 들어가고 나가기 1번씩 = O(N) (매초 다리 전체를 움직이면 O(시간 × L) → 최악 1억 이상, 위험)
+// [자료구조] 큐(Deque<int[]>) — {트럭 무게, 다리에 들어간 시각}
+// [풀이] 큐 -> while 뭐가 빌때? 다리 건너는 트럭이 빌때 끝 -> 어떤 값? 인덱스 or 값 or 남은 거리 -> 무게랑 들어간 시각으로 확인
 // [테스트] 
-// 1) 1, 1, [1]
-// 2) 
+// 1) 1, 1, [1]  → 2
+// 2) 1, 100, [1,1,1] → 4
 
 import java.util.*;
 
 class Solution {
     public int solution(int bridge_length, int weight, int[] truck_weights) {
-        Deque<Integer> q = new ArrayDeque<>();
-        q.offer(1);
-        int cur_weight = truck_weights[0];
-        int next_truck = 1;
-        int finish_truck = 0;
-        int time = 1;
+        Deque<int[]> bridge = new ArrayDeque<>(); // {무게, 진입 시각}
+        int time = 0;
+        int curWeight = 0;
+        int next = 0; 
         
-        while(!q.isEmpty()){
-            // 전부 앞으로 가기
-            int size = q.size();              
-            for (int i = 0; i < size; i++) {
-                if(q.peek() >= bridge_length) {
-                    q.poll();
-                    cur_weight -= truck_weights[finish_truck++];
-                }
-                else q.offer(q.poll()+1);
-            }
-            
-            if(next_truck < truck_weights.length && weight >= cur_weight + truck_weights[next_truck]) { // 새로운 트럭 다리 건너게 하기
-                q.offer(1);
-                cur_weight += truck_weights[next_truck];
-                next_truck++;
-            }
-            
+        while(next < truck_weights.length){
             time++;
+            
+            // ① 맨 앞 트럭이 다 건넜으면 내리기
+            if (!bridge.isEmpty() && time - bridge.peek()[1] == bridge_length){
+                curWeight -= bridge.poll()[0];
+            }
+            
+            // ② 다음 트럭 올리기
+            if (curWeight + truck_weights[next] <= weight) {
+                bridge.offer(new int[]{truck_weights[next], time});
+                curWeight += truck_weights[next];
+                next++;
+            }
         }
         
-        return time;
+        return time + bridge_length;
     }
 }
