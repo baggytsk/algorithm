@@ -1,25 +1,31 @@
-import java.util.*;
+// [시간] N < 100 -> O(N^2) 가능
+// [자료구조] 큐
+// [풀이] 남은 시간 넣어두고 계속 빼기
 
+import java.util.*;
 class Solution {
     public int[] solution(int[] progresses, int[] speeds) {
-        Queue<Integer> q = new ArrayDeque<>();
+        List<Integer> answer = new ArrayList<>();
+        Deque<Integer> q = new ArrayDeque<>();
         
         for(int i=0; i<progresses.length; i++){
-            q.offer((100 - progresses[i] + speeds[i] - 1) / speeds[i]);
+            int lastTime = (100 - progresses[i])/speeds[i];
+            if((100 - progresses[i])%speeds[i] != 0) lastTime++;
+            q.offer(lastTime);
         }
-        
-        List<Integer> list = new ArrayList<>();
         
         while(!q.isEmpty()){
-            int cur = q.poll();
+            int time = q.poll();
             int count = 1;
-            while(!q.isEmpty()) {
-                if(cur < q.peek()) break;
-                q.poll(); count++; 
+            
+            while(!q.isEmpty() && q.peek() <= time){
+                q.poll();
+                count++;
             }
-            list.add(count);
+            
+            answer.add(count);
         }
         
-        return list.stream().mapToInt(Integer::intValue).toArray();
+        return answer.stream().mapToInt(i->i).toArray();
     }
 }
