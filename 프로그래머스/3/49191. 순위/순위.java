@@ -1,6 +1,6 @@
-// [시간복잡도] N<100, E<4500
-// [자료구조]
-// [풀이] 플로이드-워셜
+// [시간복잡도] O(n³) = 100만, n ≤ 100이라 충분
+// [자료구조] boolean[][] win (win[a][b] = a가 b를 이김, 간접 포함)
+// [풀이] 플로이드로 승패 전파 → 이긴 수 + 진 수 == n-1이면 확정
 
 class Solution {
     public int solution(int n, int[][] results) {
